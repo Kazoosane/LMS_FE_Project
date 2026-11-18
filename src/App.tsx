@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Sidebar from "./layouts/sidebar";
 
 type Post = {
     id: number,
@@ -26,6 +27,8 @@ export default function App() {
     }, []);
 
     return (
+        <>
+        <Sidebar />
         <main className="min-h-screen bg-slate-100 py-12 px-4">
 
             <div className="mx-auto max-w-2xl">
@@ -55,5 +58,6 @@ export default function App() {
                 </div>
             </div>
         </main>
+        </>
     )
 }
