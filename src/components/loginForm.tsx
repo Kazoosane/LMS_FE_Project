@@ -1,9 +1,60 @@
 import Button from './button'
+import { useState } from 'react';
+
+interface LoginResponse {
+    message: string;
+    error?: string;
+    data?: {
+        username: string;
+        email: string;
+        password: string
+    }
+}
 
 export default function LoginForm() {
+    const [error, setError] = useState<string>("");
+    const [success, setSucccess] = useState<string>("");
+    const [loading, setLoading] =  useState<boolean>(false);
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        setError("");
+        setSucccess("");
+        setLoading(true);
+
+        const formData = new FormData(e.currentTarget);
+        const payload = {
+            username: formData.get("username"),
+            email: formData.get("email"),
+            password: formData.get("password")
+        }
+    
+        try {
+            const res = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+
+            const result: LoginResponse = await res.json();
+
+            if(!res.ok) {
+                setError(result.error ?? result.message);
+                return;
+            }
+
+            setSucccess(result.message);
+        } catch(error) {
+            setError("Tidak dapat terhubung ke server");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <>
-            <form action="" method="POST" className='w-125 p-8 shadow-2xl rounded-2xl'>
+            <form onSubmit={handleSubmit} className='w-125 p-8 shadow-2xl rounded-2xl'>
                 <div className='flex justify-end items-center'>
                     <a href="/" className='bg-cyan-900 text-cyan-300 px-3 py-0.5 rounded-xl'>Beranda</a>
                 </div>
